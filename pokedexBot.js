@@ -34,7 +34,7 @@ bot.on('message', message => {
 });
 
 //Bot login in
-bot.login('NDU4MDkwNTE0NjI1ODU1NDk5.DgixUQ.eXig2oeIoDRgsSa9q9QqNvMJkQA');
+bot.login('SECRET_CLIENT_ID');
 
 //Returning Name, Id, Sprite
 function findPokemonNameIdSprite(pokemonNameID) {
