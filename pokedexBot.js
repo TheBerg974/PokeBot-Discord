@@ -22,11 +22,18 @@ bot.on('message', message => {
       let spriteURL = parsePokemonSprites(response)
       let color = parsePokemonColor(response);
       let description = parsePokemonDescription(response);
+      let statMap = parsePokemonStats(response);
 
       const embed = new RichEmbed()
       .setTitle(name.toUpperCase())
       .setColor(0xFF0000) //TODO find a way to convert color name
-      .addField('Description', description)
+      .addField('SPEED: ', statMap.get('SPD'), true)
+      .addField('SPECIAL DEFENSE: ', statMap.get('SD'), true)
+      .addField('SPECIAL ATTACK: ', statMap.get('SA'), true)
+      .addField('DEFENSE: ', statMap.get('D'), true)
+      .addField('ATTACK: ', statMap.get('A'), true)
+      .addField('HEALTH POINTS: ', statMap.get('HP') + '\n', true)
+      .addField('DESCRIPTION', description)
       .setThumbnail(spriteURL);
     message.channel.send(embed);
    })
@@ -71,12 +78,33 @@ function parsePokemonColor(json) {
 
 function parsePokemonDescription(json) {
   let descriptions = json[1].flavor_text_entries
-  for (let index = 0; index < descriptions.length; index++) {
-    let language = descriptions[index].language.name;
+  for (let i = 0; i < descriptions.length; i++) {
+    let language = descriptions[i].language.name;
     if(language == 'en') {
-      let description = descriptions[index].flavor_text;
+      let description = descriptions[i].flavor_text;
+      description.replace('\n', ' ');
       return description;
     }
   }
+}
+
+function parsePokemonStats(json) {
+  let statMap = new Map();
+  
+  let speed = json[0].stats[0].base_stat;
+  let specialDefense = json[0].stats[1].base_stat;
+  let specialAttack = json[0].stats[2].base_stat;
+  let defense = json[0].stats[3].base_stat;
+  let attack = json[0].stats[4].base_stat;
+  let hP = json[0].stats[5].base_stat;
+
+  statMap.set('SPD', speed);
+  statMap.set('SD', specialDefense);
+  statMap.set('SA', specialAttack);
+  statMap.set('D', defense);
+  statMap.set('A', attack);
+  statMap.set('HP', hP);
+
+  return statMap;
 }
 
