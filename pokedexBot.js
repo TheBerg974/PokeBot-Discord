@@ -2,8 +2,9 @@
 const { Client, RichEmbed } = require('discord.js');
 const bot = new Client();
 
-//Importing 
+//Importing functions
 let pokemon = require('./pokedexPokemon');
+let pokemonItem = require('./pokedexItem.js');
 
 //Bot is ready
 bot.on('ready', () => {
@@ -11,7 +12,7 @@ bot.on('ready', () => {
 });
 
 bot.on('message', message => {
-  if (message.content.startsWith('!pokemon ')) {
+  if(message.content.startsWith('!pokemon ')) {
     const pokemonName = message.content.replace('!pokemon ', '');
     //Creating the pokemon Info Embed
     let pokemonInfo = Promise.all([pokemon.findPokemonNameIdSprite(pokemonName), pokemon.findPokemonDescriptionColor(pokemonName)])
@@ -25,7 +26,7 @@ bot.on('message', message => {
       let typesArray = pokemon.parsePokemonType(response);
 
       const embed = new RichEmbed()
-      .setTitle(name.toUpperCase())
+      .setTitle(name.toUpperCase() + ' (#' + id + ')')
       .setColor(0xFF0000) //TODO find a way to convert color name
       .addField('SPEED: ', statMap.get('SPD'), true)
       .addField('SPECIAL DEFENSE: ', statMap.get('SD'), true)
@@ -33,11 +34,36 @@ bot.on('message', message => {
       .addField('DEFENSE: ', statMap.get('D'), true)
       .addField('ATTACK: ', statMap.get('A'), true)
       .addField('HEALTH POINTS: ', statMap.get('HP') + '\n', true)
-      .addField('DESCRIPTION', description)
-      .addField('TYPE(S)', typesArray.toString())
+      .addField('DESCRIPTION: ', description)
+      .addField('TYPE(S): ', typesArray.toString())
       .setThumbnail(spriteURL);
-    message.channel.send(embed);
-   })
+
+      message.channel.send(embed);
+
+    }).catch(function(error) {
+      message.reply('Sorry, but the command you entered is invalid');
+    });
+
+  }else if(message.content.startsWith('!item ')) {
+    const itemName = message.content.replace('!item ', '');
+
+    let itemInfo = pokemonItem.findItem(itemName);
+    itemInfo.then(function(response) {
+      let name = pokemonItem.parseItemName(response);
+      let id = pokemonItem.parseItemId(response);
+      let spriteURL = pokemonItem.parseItemSpriteURL(response);
+      let description = pokemonItem.parseItemDescription(response);
+      let effect = pokemonItem.parseItemEffect(response);
+
+      const embed = new RichEmbed()
+      .setTitle(name.toUpperCase() + ' (#' + id + ')')
+      .setColor(0xFF0000)
+      .addField('EFFECT: ', effect)
+      .addField('DESCRIPTION: ', description)
+      .setThumbnail(spriteURL);
+      
+      message.channel.send(embed);
+    })
   }
 });
 
