@@ -70,7 +70,17 @@ bot.on('message', message => {
 
     let evolutionInfo = pokemonEvolution.findEvolution(evolutionId);
     evolutionInfo.then(function(response) {
-      console.log(pokemonEvolution.parseEvolution(response));
+
+      evolutionArray = pokemonEvolution.parseEvolution(response);
+
+      const embed = new RichEmbed()
+      .setColor(0x00FF00)
+      
+      for(i = 0; i < evolutionArray.length; i++) {
+        embed.addField('Evolution(' + (i + 1) + ')', evolutionArray[i].toUpperCase());
+      }
+
+      message.channel.send(embed);
       
     }).catch(function(error) {
       message.reply('Sorry, but the command you entered is invalid');
