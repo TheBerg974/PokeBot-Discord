@@ -79,6 +79,6 @@ bot.on('message', message => {
 });
 
 //Bot login in
-bot.login('NDU4MDkwNTE0NjI1ODU1NDk5.XXhjEA.7QOBrvvJWOqNbRDqCUw64XzDO-E');
+bot.login('SECRET_CLIENT_ID');
 
 
