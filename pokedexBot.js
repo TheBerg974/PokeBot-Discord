@@ -5,6 +5,7 @@ const bot = new Client();
 //Importing functions
 let pokemon = require('./pokedexPokemon');
 let pokemonItem = require('./pokedexItem.js');
+let pokemonEvolution = require('./pokedexEvolution.js');
 
 //Bot is ready
 bot.on('ready', () => {
@@ -57,17 +58,27 @@ bot.on('message', message => {
 
       const embed = new RichEmbed()
       .setTitle(name.toUpperCase() + ' (#' + id + ')')
-      .setColor(0xFF0000)
+      .setColor(0x0000FF)
       .addField('EFFECT: ', effect)
       .addField('DESCRIPTION: ', description)
       .setThumbnail(spriteURL);
       
       message.channel.send(embed);
     })
+  }else if(message.content.startsWith('!evolution')) {
+    const evolutionId = message.content.replace('!evolution ', '');
+
+    let evolutionInfo = pokemonEvolution.findEvolution(evolutionId);
+    evolutionInfo.then(function(response) {
+      console.log(pokemonEvolution.parseEvolution(response));
+      
+    }).catch(function(error) {
+      message.reply('Sorry, but the command you entered is invalid');
+    });
   }
 });
 
 //Bot login in
-bot.login('SECRET_CLIENT_ID');
+bot.login('NDU4MDkwNTE0NjI1ODU1NDk5.XXhjEA.7QOBrvvJWOqNbRDqCUw64XzDO-E');
 
 
